@@ -1,0 +1,436 @@
+import { useState, useEffect } from “react”;
+
+const questions = [
+{
+id: 1,
+question: “休日の過ごし方は？”,
+options: [
+{ label: “カフェ巡り・ショッピング・お出かけ派”, value: “shoulder”, icon: “01” },
+{ label: “家でゆっくり・近所だけで完結派”, value: “hand”, icon: “02” },
+],
+},
+{
+id: 2,
+question: “スマホは主にどう持つ？”,
+options: [
+{ label: “ポケットに入れることが多い”, value: “hand”, icon: “01” },
+{ label: “バッグや手に持つことが多い”, value: “shoulder”, icon: “02” },
+],
+},
+{
+id: 3,
+question: “ファッションのスタイルは？”,
+options: [
+{ label: “小物・アクセでコーデを楽しみたい”, value: “shoulder”, icon: “01” },
+{ label: “シンプル・機能重視でまとめたい”, value: “hand”, icon: “02” },
+],
+},
+{
+id: 4,
+question: “よく使うシーンは？”,
+options: [
+{ label: “移動中・立ちながらよく操作する”, value: “shoulder”, icon: “01” },
+{ label: “座って・止まってから使うことが多い”, value: “hand”, icon: “02” },
+],
+},
+{
+id: 5,
+question: “スマホ落下への不安は？”,
+options: [
+{ label: “かなり心配・落としたことがある”, value: “hand”, icon: “01” },
+{ label: “あまり気にしない・落とした記憶がない”, value: “shoulder”, icon: “02” },
+],
+},
+{
+id: 6,
+question: “荷物の量は普段どのくらい？”,
+options: [
+{ label: “最小限・身軽に動きたい”, value: “shoulder”, icon: “01” },
+{ label: “バッグに色々入れて持ち歩く”, value: “hand”, icon: “02” },
+],
+},
+];
+
+const results = {
+shoulder: {
+typeJa: “スマホショルダー派”,
+roman: “Smartphone Shoulder”,
+desc: “あなたはアクティブに動き回り、おしゃれも機能性も妥協したくないタイプ。スマホショルダーなら両手が自由になり、コーデのアクセントにもなります。”,
+points: [
+“両手がフリーで動きやすい”,
+“財布・カードも一緒に収納できる”,
+“コーデのアクセントとして映える”,
+“旅行・ライブ・育児中にも大活躍”,
+],
+caution: “肩紐の長さ調整や、重くなりすぎないよう中身の量に注意。”,
+accent: “#8B6F47”,
+light: “#F9F4EC”,
+},
+hand: {
+typeJa: “ハンドストラップ派”,
+roman: “Hand Strap”,
+desc: “あなたは安心・安全を大切にしながら、シンプルに使いやすさを求めるタイプ。ハンドストラップならしっかりホールドでき、普段のバッグとも相性抜群です。”,
+points: [
+“落下・紛失リスクをしっかり防げる”,
+“コンパクトでどんなスタイルにも馴染む”,
+“普段のバッグとの併用がしやすい”,
+“片手でサッと取り出してすぐ使える”,
+],
+caution: “両手を使いたい場面ではやや不便に感じることも。”,
+accent: “#4A6B7A”,
+light: “#EBF1F4”,
+},
+};
+
+const GOLD = “#C9A96E”;
+const DARK = “#1C1A17”;
+const CREAM = “#FAF8F4”;
+const MID = “#8A8278”;
+
+export default function App() {
+const [step, setStep] = useState(0);
+const [answers, setAnswers] = useState([]);
+const [selected, setSelected] = useState(null);
+const [visible, setVisible] = useState(false);
+
+useEffect(() => {
+setVisible(false);
+const t = setTimeout(() => setVisible(true), 80);
+return () => clearTimeout(t);
+}, [step]);
+
+const currentQ = questions[step - 1];
+const handleStart = () => setStep(1);
+const handleSelect = (v) => setSelected(v);
+const handleNext = () => {
+if (!selected) return;
+const next = […answers, selected];
+setAnswers(next);
+setSelected(null);
+setStep(step === questions.length ? 7 : step + 1);
+};
+const getResult = () => {
+const c = answers.reduce((a, v) => ({ …a, [v]: (a[v] || 0) + 1 }), {});
+return (c.shoulder || 0) >= (c.hand || 0) ? “shoulder” : “hand”;
+};
+const handleReset = () => { setStep(0); setAnswers([]); setSelected(null); };
+
+const progress = step >= 1 && step <= 6 ? step / questions.length : 0;
+const fade = {
+opacity: visible ? 1 : 0,
+transform: visible ? “translateY(0)” : “translateY(14px)”,
+transition: “opacity 0.55s ease, transform 0.55s ease”,
+};
+
+return (
+<div style={s.root}>
+<style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap'); * { box-sizing: border-box; margin: 0; padding: 0; } button:focus { outline: none; }`}</style>
+
+```
+  <div style={s.grain} />
+  <div style={s.lineL} />
+  <div style={s.lineR} />
+
+  <div style={{ ...s.card, ...fade }}>
+
+    {/* ─── START ─── */}
+    {step === 0 && (
+      <div style={s.col}>
+        <div style={s.overline}>LIFESTYLE DIAGNOSIS</div>
+        <div style={s.goldRule} />
+        <h1 style={s.heroTitle}>
+          <em style={s.heroEm}>あなたに</em>
+          <br />合うのは
+          <br /><strong style={s.heroBold}>どっち？</strong>
+        </h1>
+        <p style={s.heroSub}>Smartphone Shoulder &nbsp;／&nbsp; Hand Strap</p>
+        <div style={s.thinRule} />
+        <p style={s.heroDesc}>
+          6つの問いに答えるだけで、<br />
+          あなたのライフスタイルに寄り添う<br />
+          スタイルが明らかになります。
+        </p>
+        <button style={s.startBtn} onClick={handleStart}>
+          <span style={s.startLabel}>診 断 を は じ め る</span>
+          <span style={s.startArrow}>→</span>
+        </button>
+        <p style={s.footnote}>6 Questions · approx. 1 min</p>
+      </div>
+    )}
+
+    {/* ─── QUESTIONS ─── */}
+    {step >= 1 && step <= 6 && (
+      <div style={s.col}>
+        <div style={s.pgRow}>
+          <span style={s.pgCurrent}>0{step}</span>
+          <span style={s.pgSep}> — </span>
+          <span style={s.pgTotal}>06</span>
+        </div>
+        <div style={s.pgTrack}>
+          <div style={{ ...s.pgFill, width: `${progress * 100}%` }} />
+        </div>
+        <div style={s.qTag}>Question</div>
+        <h2 style={s.qText}>{currentQ.question}</h2>
+        <div style={s.thinRule} />
+        <div style={s.optCol}>
+          {currentQ.options.map((opt) => {
+            const on = selected === opt.value;
+            return (
+              <button
+                key={opt.value}
+                style={{ ...s.optBtn, ...(on ? s.optOn : {}) }}
+                onClick={() => handleSelect(opt.value)}
+              >
+                <span style={{ ...s.optNum, ...(on ? s.optNumOn : {}) }}>{opt.icon}</span>
+                <span style={{ ...s.optLabel, color: on ? CREAM : DARK }}>{opt.label}</span>
+                {on && <span style={s.check}>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          style={{ ...s.nextBtn, ...(selected ? {} : s.nextOff) }}
+          onClick={handleNext}
+          disabled={!selected}
+        >
+          {step === questions.length ? "結 果 を 見 る" : "次 の 質 問 へ"}
+        </button>
+      </div>
+    )}
+
+    {/* ─── RESULT ─── */}
+    {step === 7 && (() => {
+      const key = getResult();
+      const r = results[key];
+      return (
+        <div style={s.col}>
+          <div style={s.overline}>Your Result</div>
+          <div style={{ ...s.accentBar, background: r.accent }} />
+          <p style={{ ...s.resultRoman, color: r.accent }}>{r.roman}</p>
+          <h2 style={{ ...s.resultType, color: DARK }}>{r.typeJa}</h2>
+          <div style={s.thinRule} />
+          <p style={s.resultDesc}>{r.desc}</p>
+          <div style={{ ...s.pointsBox, background: r.light, borderColor: r.accent + "40" }}>
+            <div style={s.ptHeader}>
+              <span style={{ ...s.ptDot, background: r.accent }} />
+              <span style={s.ptTitle}>おすすめポイント</span>
+            </div>
+            {r.points.map((p, i) => (
+              <div key={i} style={s.ptRow}>
+                <span style={{ ...s.ptNum, color: r.accent }}>{String(i + 1).padStart(2, "0")}</span>
+                <span style={s.ptText}>{p}</span>
+              </div>
+            ))}
+          </div>
+          <div style={s.cautionRow}>
+            <span style={{ color: GOLD, fontSize: 18, lineHeight: 1.5 }}>—</span>
+            <span style={s.cautionTxt}>{r.caution}</span>
+          </div>
+          <div style={s.thinRule} />
+          <button style={s.retryBtn} onClick={handleReset}>
+            もう一度診断する
+          </button>
+        </div>
+      );
+    })()}
+  </div>
+</div>
+```
+
+);
+}
+
+const s = {
+root: {
+minHeight: “100vh”,
+background: CREAM,
+display: “flex”,
+alignItems: “center”,
+justifyContent: “center”,
+padding: “32px 16px”,
+position: “relative”,
+fontFamily: “‘Montserrat’, sans-serif”,
+overflow: “hidden”,
+},
+grain: {
+position: “fixed”, inset: 0,
+backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
+backgroundSize: “180px”,
+pointerEvents: “none”,
+zIndex: 0,
+},
+lineL: {
+position: “fixed”, top: 0, bottom: 0, left: “7vw”,
+width: “1px”,
+background: `linear-gradient(to bottom, transparent 10%, ${GOLD}55 50%, transparent 90%)`,
+pointerEvents: “none”,
+},
+lineR: {
+position: “fixed”, top: 0, bottom: 0, right: “7vw”,
+width: “1px”,
+background: `linear-gradient(to bottom, transparent 10%, ${GOLD}55 50%, transparent 90%)`,
+pointerEvents: “none”,
+},
+card: {
+background: “#fff”,
+border: “1px solid #EAE4DA”,
+maxWidth: “460px”,
+width: “100%”,
+padding: “52px 44px”,
+position: “relative”,
+zIndex: 1,
+boxShadow: “0 4px 80px rgba(28,26,23,0.07)”,
+},
+col: { display: “flex”, flexDirection: “column”, gap: “22px” },
+overline: {
+fontFamily: “‘Montserrat’, sans-serif”,
+fontSize: “9px”, letterSpacing: “6px”,
+color: GOLD, fontWeight: 600, textTransform: “uppercase”,
+},
+goldRule: {
+height: “1px”,
+background: `linear-gradient(to right, ${GOLD}, transparent)`,
+width: “64px”, marginTop: “-10px”,
+},
+thinRule: { height: “1px”, background: “#EDE8DF” },
+heroTitle: {
+fontFamily: “‘Cormorant Garamond’, serif”,
+fontSize: “50px”, fontWeight: 300,
+color: DARK, lineHeight: 1.2, letterSpacing: “-0.5px”,
+},
+heroEm: { fontStyle: “italic”, color: MID },
+heroBold: { fontWeight: 600, color: DARK },
+heroSub: {
+fontFamily: “‘Montserrat’, sans-serif”,
+fontSize: “10px”, letterSpacing: “2.5px”,
+color: MID, fontWeight: 400, marginTop: “-10px”,
+},
+heroDesc: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “13px”, color: MID,
+lineHeight: 2.1, fontWeight: 300,
+},
+startBtn: {
+background: DARK, border: “none”,
+padding: “18px 28px”, cursor: “pointer”,
+display: “flex”, alignItems: “center”,
+justifyContent: “space-between”, gap: “16px”,
+width: “100%”, transition: “opacity 0.2s”,
+},
+startLabel: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “12px”, color: CREAM,
+letterSpacing: “4px”, fontWeight: 300,
+},
+startArrow: { color: GOLD, fontSize: “16px” },
+footnote: {
+fontFamily: “‘Montserrat’, sans-serif”,
+fontSize: “9px”, letterSpacing: “3px”,
+color: “#BFBAB0”, textAlign: “center”, marginTop: “-8px”,
+},
+pgRow: { display: “flex”, alignItems: “baseline”, gap: “4px” },
+pgCurrent: {
+fontFamily: “‘Cormorant Garamond’, serif”,
+fontSize: “40px”, fontWeight: 300, color: DARK, lineHeight: 1,
+},
+pgSep: { fontFamily: “‘Montserrat’, sans-serif”, fontSize: “12px”, color: “#C0B8AE”, margin: “0 4px” },
+pgTotal: { fontFamily: “‘Montserrat’, sans-serif”, fontSize: “12px”, color: “#C0B8AE”, letterSpacing: “1px” },
+pgTrack: { height: “1px”, background: “#EDE8DF”, overflow: “hidden”, marginTop: “-10px” },
+pgFill: { height: “100%”, background: GOLD, transition: “width 0.5s cubic-bezier(0.4,0,0.2,1)” },
+qTag: {
+fontFamily: “‘Montserrat’, sans-serif”,
+fontSize: “9px”, letterSpacing: “5px”,
+color: GOLD, fontWeight: 600, textTransform: “uppercase”, marginTop: “-8px”,
+},
+qText: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “19px”, fontWeight: 400,
+color: DARK, lineHeight: 1.85,
+},
+optCol: { display: “flex”, flexDirection: “column”, gap: “10px” },
+optBtn: {
+background: “#FAFAF8”, border: “1px solid #EDE8DF”,
+padding: “20px 22px”, cursor: “pointer”,
+display: “flex”, alignItems: “center”, gap: “18px”,
+textAlign: “left”, transition: “all 0.22s ease”, position: “relative”,
+width: “100%”,
+},
+optOn: { background: DARK, borderColor: DARK },
+optNum: {
+fontFamily: “‘Cormorant Garamond’, serif”,
+fontSize: “11px”, color: “#C0B8AE”,
+letterSpacing: “2px”, flexShrink: 0, fontWeight: 400,
+},
+optNumOn: { color: GOLD },
+optLabel: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “14px”, lineHeight: 1.6, fontWeight: 300, flex: 1,
+},
+check: { color: GOLD, fontSize: “14px”, flexShrink: 0 },
+nextBtn: {
+background: “transparent”,
+border: `1px solid ${DARK}`,
+padding: “16px 28px”, cursor: “pointer”,
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “12px”, color: DARK,
+letterSpacing: “4px”, fontWeight: 300,
+transition: “all 0.2s”, width: “100%”,
+},
+nextOff: { opacity: 0.2, cursor: “not-allowed” },
+accentBar: { height: “3px”, width: “40px”, marginTop: “-10px” },
+resultRoman: {
+fontFamily: “‘Cormorant Garamond’, serif”,
+fontSize: “13px”, letterSpacing: “6px”,
+fontWeight: 300, marginTop: “-8px”,
+},
+resultType: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “24px”, fontWeight: 600, lineHeight: 1.5,
+},
+resultDesc: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “13px”, color: MID,
+lineHeight: 2.1, fontWeight: 300,
+},
+pointsBox: {
+border: “1px solid”,
+padding: “28px”,
+display: “flex”, flexDirection: “column”, gap: “14px”,
+},
+ptHeader: { display: “flex”, alignItems: “center”, gap: “10px”, marginBottom: “4px” },
+ptDot: { width: “6px”, height: “6px”, borderRadius: “50%”, flexShrink: 0 },
+ptTitle: {
+fontFamily: “‘Montserrat’, sans-serif”,
+fontSize: “9px”, letterSpacing: “4px”,
+color: MID, fontWeight: 600, textTransform: “uppercase”,
+},
+ptRow: { display: “flex”, alignItems: “baseline”, gap: “14px” },
+ptNum: {
+fontFamily: “‘Cormorant Garamond’, serif”,
+fontSize: “13px”, fontWeight: 400,
+flexShrink: 0, letterSpacing: “1px”,
+},
+ptText: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “13px”, color: DARK,
+lineHeight: 1.7, fontWeight: 300,
+},
+cautionRow: { display: “flex”, alignItems: “flex-start”, gap: “12px”, padding: “0 2px” },
+cautionTxt: {
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “12px”, color: MID,
+lineHeight: 1.9, fontWeight: 300,
+},
+retryBtn: {
+background: “transparent”, border: “none”,
+cursor: “pointer”,
+fontFamily: “‘Noto Serif JP’, serif”,
+fontSize: “11px”, color: MID,
+letterSpacing: “3px”,
+textDecoration: “underline”,
+textDecorationColor: “#C0B8AE”,
+textUnderlineOffset: “4px”,
+padding: “8px 0”, fontWeight: 300,
+alignSelf: “center”,
+},
+};
